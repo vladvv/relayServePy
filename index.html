@@ -1,0 +1,80 @@
+<head>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<style>
+.btn-info .glyphicon {
+	display: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<h1>ayy press a button</h1>
+	<div>
+		<button id="0" type="button" class="btn btn-default btn-lg">
+		<span class="glyphicon glyphicon-flash" aria-hidden="true"> </span>Big Lamp
+		</button>
+		<button id="1" type="button" class="btn btn-default btn-lg">
+		<span class="glyphicon glyphicon-flash" aria-hidden="true"> </span>Fan
+		</button>
+		<button id="2" type="button" class="btn btn-default btn-lg">
+		<span class="glyphicon glyphicon-flash" aria-hidden="true"> </span>LED Light
+		</button>
+		<button id="3" type="button" class="btn btn-default btn-lg">
+		<span class="glyphicon glyphicon-flash" aria-hidden="true"> </span>Table Lamp
+		</button>
+	</div>
+</div>
+<script>
+
+
+
+var state = [false, false, false, false];
+
+setInterval(getState, 2000)
+
+
+function getState() {
+		$.get("status", function(data) {
+		console.log('received' + data)
+		state = data;
+		updateButtons();
+	});
+}
+
+function updateButtons() {
+	$('button').removeClass('btn-info');
+	$('button').removeClass('btn-warning');
+	$('button').each(function(){
+		if(!state[this.id])
+			$(this).addClass('btn-warning');
+		else
+			$(this).addClass('btn-info');
+	});
+}
+
+function sendState(){
+	$.ajax({
+		method: "POST",
+		url: "update",
+		data: {
+			btn1: state[0],
+			btn2: state[1],
+			btn3: state[2],
+			btn4: state[3]
+		}
+	})
+}
+
+$('button').click(function(){
+	console.log(this.id);
+	if(state[this.id]) {
+		state[this.id] = false;
+	} else {
+		state[this.id] = true;
+	}
+	sendState();
+	updateButtons();
+});
+</script>
+</body>
